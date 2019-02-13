@@ -26,6 +26,9 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="LexerAnalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
