@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 using namespace std;
 class LexerAnalyzer
 {
@@ -12,8 +13,7 @@ private:
 	string *keywords;
 	string *seperators;
 	string *operators;
-	string *tokens;
-	string *tokenType;
-
+	vector<string> tokens;
+	vector<string> tokenType;
 };
 

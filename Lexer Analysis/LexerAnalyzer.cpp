@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <ctype.h>
-
+#include <vector>
 LexerAnalyzer::LexerAnalyzer()
 {
 	keywords = new string[19]{
@@ -13,12 +13,11 @@ LexerAnalyzer::LexerAnalyzer()
 		"elseend", "get", "put", "true", "false",
 		"and", "or", "xor", "not"
 	};
-	seperators = new string[8]{
-		"{", "}", "(", ")", "[", "]", ",", 
-		"$$"
+	seperators = new string[7]{
+		"{", "}", "(", ")", "[", "]", ","
 	};
-	operators = new string[3]{
-		">", "<", "<="
+	operators = new string[2]{
+		">", "<"
 	};
 }
 
@@ -30,10 +29,11 @@ LexerAnalyzer::~LexerAnalyzer()
 void LexerAnalyzer::setSourceCode(string textFile)
 {
 	fstream fin(textFile);
+	// check if the file will open
 	char ch;
 	if (!fin.is_open()) {
 		cerr << "error while opening the text file\n";
-		exit(0);
+		return;
 	}
 	else {
 		cout << "Successfully opened file\n";
@@ -41,7 +41,10 @@ void LexerAnalyzer::setSourceCode(string textFile)
 
 	while (!fin.eof()) {
 		ch = fin.get();
-		cout << ch << endl;
+		if (ch == ' ' || ch == '\n') {
+
+		}
+		else cout << ch << endl;
 	}
 
 	fin.close();
