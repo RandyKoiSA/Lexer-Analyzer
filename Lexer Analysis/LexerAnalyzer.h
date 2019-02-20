@@ -15,5 +15,6 @@ private:
 	string *operators;
 	vector<string> tokens;
 	vector<string> tokenType;
+	int currentState;
 };
 
