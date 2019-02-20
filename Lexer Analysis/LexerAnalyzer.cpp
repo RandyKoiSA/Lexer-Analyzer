@@ -6,22 +6,23 @@
 #include <vector>
 LexerAnalyzer::LexerAnalyzer()
 {
-	keywords = new string[19]{
-		"function", "if", "ifend",
-		"while", "whileend", "return",
-		"int", "real", "boolean", "else",
-		"elseend", "get", "put", "true", "false",
-		"and", "or", "xor", "not"
+	keywords = new string[13]{
+		"int", "float", "bool", "if", "else",
+		"do", "while", "whileend", "doend", "for",
+		"and", "or", "function"
 	};
-	seperators = new string[7]{
-		"{", "}", "(", ")", "[", "]", ","
+	seperators = new string[13]{
+		"(", ")", "'", "{", "}",
+		"[", "]", ",", ".", ":",
+		";", "!", " "
 	};
-	operators = new string[2]{
-		">", "<"
+	operators = new string[8]{
+		"*", "+", "-", "=", "/",
+		">", "<", "%"
 	};
 }
 
-
+// Deconstructor
 LexerAnalyzer::~LexerAnalyzer()
 {
 }
