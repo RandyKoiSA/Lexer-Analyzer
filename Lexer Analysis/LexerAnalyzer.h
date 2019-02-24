@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <fstream>
 using namespace std;
 
 class LexerAnalyzer
@@ -9,32 +10,33 @@ public:
 	LexerAnalyzer();
 	~LexerAnalyzer();
 
-	void analyzeLexeme(string textFile);
-	void stateOne(char ch);
-	void stateTwo(char ch);
-	void stateThree(char ch);
-	void stateFour(char ch);
+	void analyzeLexeme();
+	void stateOne();
+	void stateTwo();
+	void stateThree();
+	void stateFour();
 
 	bool isSeperator(char ch);
 	bool isOperator(char ch);
-private:
-	string *keywords;
-	string *seperators;
-	string *operators;
+	bool isKeyword(char buffer[]);
 
-	int state;
+	void loadTextFile(string textFile);
+	void isTextFileOpen();
+	char getNextCharacter();
+private:
+	const int KEYWORDSIZE = 13;
+	const int SEPERATORSIZE = 13;
+	const int OPERATORSIZE = 8;
+
+	const int MAXSTATES = 3;
+
 	int section;
 	int currentState;
 
-	int table[3][3] = {
-		{2, 2, 3},
-		{2, 2, 1},
-		{3, 3, 3}
-	};
+	fstream fin;
+	string currentFile;
 
-	vector<string> tokens;
-	vector<string> tokenType;
-
-	vector<char> buffer;
+	char *buffer;
+	int j;
 };
 

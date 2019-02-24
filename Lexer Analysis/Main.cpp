@@ -25,7 +25,8 @@ int main()
 		}
 		else {
 			LexerAnalyzer la;
-			la.analyzeLexeme(input);
+			la.loadTextFile(input);
+			la.analyzeLexeme();
 		}
 	}
 	return 0;
