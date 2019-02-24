@@ -7,6 +7,11 @@
 #include "LexerAnalyzer.h"
 
 using namespace std;
+
+void helpDisplay() {
+
+}
+
 int main()
 {
 	string input;
@@ -15,9 +20,13 @@ int main()
 		cout << ">> Enter File Name: ";
 		getline(cin, input);
 
-
-		LexerAnalyzer la;
-		la.setSourceCode(input);
+		if (input == "help") {
+			helpDisplay();
+		}
+		else {
+			LexerAnalyzer la;
+			la.analyzeLexeme(input);
+		}
 	}
 	return 0;
 }
