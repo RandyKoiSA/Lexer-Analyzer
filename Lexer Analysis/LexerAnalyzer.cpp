@@ -54,100 +54,121 @@ void LexerAnalyzer::analyzeLexeme()
 			case 4:
 				stateFour();
 				break;
+			case 5:
+				stateFive();
+			case 6:
+				stateSix();
 			case 0:
 				break;
 			}
 		} while (!fin.eof());
+		printLexeme();
 	}
 	else {
 		printf("No FILES to analyze.\n");
 	}
 }
 
-	/*
-	Using a do-while to gaurantee it goes to state one
-	*/
-
+void LexerAnalyzer::printLexeme()
+{
+	printf("========LEXEME========\n");
+	for (int i = 0; i < tokens.size(); i++) {
+		cout << tokens[i] << "\t" << tokensType[i] << endl;
+	}
+}
 
 void LexerAnalyzer::stateOne() // the inital state
 {
-	cout << " @STATE 1\n";
-	char ch = getNextCharacter();
-	cout << ch << ": ";
+	// cout << " @STATE 1\n";
+	ch = getNextCharacter();
+	// cout << ch << ": ";
 	if (isOperator(ch)) {
-		cout << "is operator\n";
-		currentState = 1;
+		// cout << "is operator\n";
+		currentState = 5;
 	}
 	else if (isSeperator(ch)) {
-		cout << "is seperator\n";
-		currentState = 1;
+		// cout << "is seperator\n";
+		currentState = 4;
 	}
 	else if (isalpha(ch)) {
 		buffer[j++] = ch;
-		cout << "Going to state 2\n";
+		// cout << "Going to state 2\n";
 		currentState = 2;
 	}
 	else if (isdigit(ch)) {
-		cout << "is digit \n";
-		currentState = 1;
+		// cout << "is digit \n";
+		currentState = 6;
 	}
-	else {
-		cout << "Unknown character was inputed.\n";
-	}
-
 }
 
 // State Two finds if the word is a identifier
 void LexerAnalyzer::stateTwo()
 {
-	char ch = getNextCharacter();
-	cout << ch << ": ";
+	ch = getNextCharacter();
+	// cout << ch << ": ";
 	if (isalpha(ch)) {
 		buffer[j++] = ch;
-		cout << ch << " is a letter\n";
+		// cout << ch << " is a letter\n";
 		currentState = 2;
 	}
 	else if (isalnum(ch)) {
 		buffer[j++] = ch;
-		cout << ch << " is a digit\n";
+		// cout << ch << " is a digit\n";
 		currentState = 2;
 	}
 	else{
-		buffer[j] = '\0';
-		j = 0;
-		cout << buffer << " is identifier\n";
-		if (isSeperator(ch)) {
-			cout << " is seperator\n";
-		}
-		else if (isOperator(ch)) {
-			cout << " is operator\n";
-		}
-		else {
-			cout << " undefined character\n";
-		}
-		currentState = 1;
+		currentState = 3;
 	}
 }
 
+// state three is the end of finding an identifier / keyword
 void LexerAnalyzer::stateThree()
 {
-	// end of identifying a identifier
 	// check if identifier is a keyword
-	// add seperator into token / tokentype
-	cout << " is a digit(3)\n";
+	buffer[j] = '\0';
+	j = 0;
+	// cout << buffer;
+	tokens.push_back(buffer);
+	if (isKeyword(buffer)) {
+		// cout << " is keyword";
+		tokensType.push_back("keyword");
+	}
+	else {
+		// cout << " is identifier";
+		tokensType.push_back("identifier");
+	}
+
+	if (isSeperator(ch)) currentState = 4;
+	else if (isOperator(ch)) currentState = 5;
+	else currentState = 1;
+}
+
+// state four is when a seperator is found
+void LexerAnalyzer::stateFour()
+{
+	// cout << "is operator / seperators\n";
+	tokens.push_back(string(1, ch));
+	tokensType.push_back("seperator");
 	currentState = 1;
 }
 
-void LexerAnalyzer::stateFour()
+// state five is when a operator is found
+void LexerAnalyzer::stateFive()
 {
-	cout << "is operator / seperators\n";
+	tokens.push_back(string(1, ch));
+	tokensType.push_back("operator");
+	currentState = 1;
+}
+
+// state six is when a digit is found
+void LexerAnalyzer::stateSix()
+{
 	currentState = 1;
 }
 
 
 bool LexerAnalyzer::isSeperator(char ch)
 {
-
 	char seperators[13] {
 		'(', ')', '\'', '{', '}',
 		'[', ']', ',', '.', ':',
@@ -178,6 +199,9 @@ bool LexerAnalyzer::isKeyword(char buffer[])
 	"do", "while", "whileend", "doend", "for",
 	"and", "or", "function"
 	};
+
+	for (int i = 0; i < 13; i++)
+		if (strcmp(buffer, keywords[i]) == 0) return true;
 	return false;
 }
 
@@ -191,6 +215,7 @@ void LexerAnalyzer::loadTextFile(string textFile)
 	}
 }
 
+// may remove
 void LexerAnalyzer::isTextFileOpen()
 {
 	if (fin.is_open()) printf("text file %s is currently open", currentFile.c_str());

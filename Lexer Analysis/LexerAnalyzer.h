@@ -10,11 +10,17 @@ public:
 	LexerAnalyzer();
 	~LexerAnalyzer();
 
+	// main methods
 	void analyzeLexeme();
+	void printLexeme();
+
+	// state methods
 	void stateOne();
 	void stateTwo();
 	void stateThree();
 	void stateFour();
+	void stateFive();
+	void stateSix();
 
 	bool isSeperator(char ch);
 	bool isOperator(char ch);
@@ -24,19 +30,17 @@ public:
 	void isTextFileOpen();
 	char getNextCharacter();
 private:
-	const int KEYWORDSIZE = 13;
-	const int SEPERATORSIZE = 13;
-	const int OPERATORSIZE = 8;
-
-	const int MAXSTATES = 3;
-
 	int section;
 	int currentState;
 
 	fstream fin;
 	string currentFile;
 
+	vector<string> tokens;
+	vector<string> tokensType;
+
 	char *buffer;
 	int j;
+	char ch;
 };
 
