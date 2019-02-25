@@ -9,7 +9,7 @@
 using namespace std;
 
 void helpDisplay() {
-
+	cout << "*****HELP*****" << endl;
 }
 
 int main()

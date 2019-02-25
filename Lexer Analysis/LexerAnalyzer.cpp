@@ -29,7 +29,6 @@ N =
 LexerAnalyzer::LexerAnalyzer()
 {
 	currentState = 1;
-	section = NULL;	
 	buffer = new char[1000];
 	j = 0;
 }
