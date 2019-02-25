@@ -21,6 +21,7 @@ public:
 	void stateFour();
 	void stateFive();
 	void stateSix();
+	void stateSeven();
 
 	bool isSeperator(char ch);
 	bool isOperator(char ch);

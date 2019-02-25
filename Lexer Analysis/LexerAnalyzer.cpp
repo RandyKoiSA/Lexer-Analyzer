@@ -23,7 +23,9 @@ N =
 +===+===+===+========+
 */
 
-/* Constructor */
+/*
+ CONSTRUCTOR
+ */
 LexerAnalyzer::LexerAnalyzer()
 {
 	currentState = 1;
@@ -32,11 +34,17 @@ LexerAnalyzer::LexerAnalyzer()
 	j = 0;
 }
 
-/* Deconstructor */
+/*
+ DECONSTRUCTOR
+*/
 LexerAnalyzer::~LexerAnalyzer()
 {
 }
 
+/*
+ ANALYZE LEXEME
+ This is the main function of the Lexeme Analysis.
+*/
 void LexerAnalyzer::analyzeLexeme()
 {
 	if (fin.is_open()) {
@@ -58,6 +66,8 @@ void LexerAnalyzer::analyzeLexeme()
 				stateFive();
 			case 6:
 				stateSix();
+			case 7:
+				stateSeven();
 			case 0:
 				break;
 			}
@@ -69,6 +79,11 @@ void LexerAnalyzer::analyzeLexeme()
 	}
 }
 
+/*
+ PRINTING LEXEME RESULT METHOD
+ After text file has completely scanned, it will display the
+ tokens along with the tokens type.
+*/
 void LexerAnalyzer::printLexeme()
 {
 	printf("========LEXEME========\n");
@@ -77,31 +92,38 @@ void LexerAnalyzer::printLexeme()
 	}
 }
 
-void LexerAnalyzer::stateOne() // the inital state
+/*
+ STATE ONE METHOD
+ State one is the initial state.
+ Retrieves next character of the text file.
+ Character determines what state it goes to.
+*/
+void LexerAnalyzer::stateOne()
 {
-	// cout << " @STATE 1\n";
 	ch = getNextCharacter();
-	// cout << ch << ": ";
 	if (isOperator(ch)) {
-		// cout << "is operator\n";
 		currentState = 5;
 	}
 	else if (isSeperator(ch)) {
-		// cout << "is seperator\n";
 		currentState = 4;
 	}
 	else if (isalpha(ch)) {
 		buffer[j++] = ch;
-		// cout << "Going to state 2\n";
 		currentState = 2;
 	}
 	else if (isdigit(ch)) {
-		// cout << "is digit \n";
 		currentState = 6;
+	}
+	else if (ch == '!') {
+		currentState = 7;
 	}
 }
 
-// State Two finds if the word is a identifier
+/*
+ STATE TWO METHOD
+ A letter was detected.
+ Scans for more letter / digits after it until seperator or operator shows.
+*/
 void LexerAnalyzer::stateTwo()
 {
 	ch = getNextCharacter();
@@ -116,12 +138,22 @@ void LexerAnalyzer::stateTwo()
 		// cout << ch << " is a digit\n";
 		currentState = 2;
 	}
+	else if (ch == '$') {
+		buffer[j++] = ch;
+		currentState = 2;
+	}
 	else{
 		currentState = 3;
 	}
 }
 
-// state three is the end of finding an identifier / keyword
+/*
+ STATE THREE METHOD
+ The end of finding a identifier.
+ Checks if the identifier is a keyword.
+ Adds the following seperator / operator to the token / tokentype.
+ Then, returns back to one.
+*/
 void LexerAnalyzer::stateThree()
 {
 	// check if identifier is a keyword
@@ -138,12 +170,23 @@ void LexerAnalyzer::stateThree()
 		tokensType.push_back("identifier");
 	}
 
-	if (isSeperator(ch)) currentState = 4;
-	else if (isOperator(ch)) currentState = 5;
-	else currentState = 1;
+	if (isSeperator(ch)) {
+		tokens.push_back(string(1, ch));
+		tokensType.push_back("seperator");
+	}
+	else if (isOperator(ch)) {
+		tokens.push_back(string(1, ch));
+		tokensType.push_back("operator");
+	}
+	currentState = 1;
 }
 
-// state four is when a seperator is found
+/*
+ STATE FOUR METHOD
+ A seperator character was found.
+ Putting character in token / tokenType as a seperator.
+ Then returns back to state one.
+*/
 void LexerAnalyzer::stateFour()
 {
 	// cout << "is operator / seperators\n";
@@ -152,6 +195,12 @@ void LexerAnalyzer::stateFour()
 	currentState = 1;
 }
 
+/*
+ STATE FIVE METHOD
+ An operator character was found.
+ Putting the character in token / tokenType as a operator.
+ Then returns back to state one.
+*/
 // state five is when a operator is found
 void LexerAnalyzer::stateFive()
 {
@@ -160,13 +209,31 @@ void LexerAnalyzer::stateFive()
 	currentState = 1;
 }
 
-// state six is when a digit is found
+
+/*
+ STATE SIX METHOD
+ A digit character was found.
+ Scans for any others digits following it.
+ Then returns back to state one.
+*/
 void LexerAnalyzer::stateSix()
 {
 	currentState = 1;
 }
 
+/*
+ STATE SEVEN METHOD
+ detected a comment. scans for all comment character.
+ Then returns back to state one.
+*/
+void LexerAnalyzer::stateSeven()
+{
+}
 
+/*
+ IS CHARACTER A SEPERATOR METHOD
+ checks if the following chracter is part of the seperator list
+*/
 bool LexerAnalyzer::isSeperator(char ch)
 {
 	char seperators[13] {
@@ -180,6 +247,10 @@ bool LexerAnalyzer::isSeperator(char ch)
 	return false;
 }
 
+/*
+ IS CHARATER A OPERATOR METHOD
+ checks if the following character is part of the operator list
+*/
 bool LexerAnalyzer::isOperator(char ch)
 {
 	char operators[8]{
@@ -192,6 +263,10 @@ bool LexerAnalyzer::isOperator(char ch)
 	return false;
 }
 
+/*
+ IS IDENTIFIER A KEYWORD METHOD
+ checks if the following string(buffer) is part of the keyword list.
+*/
 bool LexerAnalyzer::isKeyword(char buffer[])
 {
 	char keywords[13][10]{
@@ -205,6 +280,10 @@ bool LexerAnalyzer::isKeyword(char buffer[])
 	return false;
 }
 
+/*
+ LOAD TEXT FILE METHOD
+ loads a text file to read. If text file doesn't exist, it will display an error.
+*/
 void LexerAnalyzer::loadTextFile(string textFile)
 {
 	fin.open(textFile);
@@ -215,13 +294,20 @@ void LexerAnalyzer::loadTextFile(string textFile)
 	}
 }
 
-// may remove
+/*
+ IS TEXT FILE OPEN? METHOD
+ validates if there is a textfile loaded.
+*/
 void LexerAnalyzer::isTextFileOpen()
 {
 	if (fin.is_open()) printf("text file %s is currently open", currentFile.c_str());
 	else printf("no text file loaded yet");
 }
 
+/*
+ GET NEXT CHARACTER METHOD
+ scans for the the next character of the loaded file.
+*/
 char LexerAnalyzer::getNextCharacter()
 {
 	if (!fin.eof()) {
