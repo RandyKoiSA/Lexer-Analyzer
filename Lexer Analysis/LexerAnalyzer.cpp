@@ -70,6 +70,8 @@ void LexerAnalyzer::analyzeLexeme()
 			case 0:
 				break;
 			}
+
+			currentState = table[currentState - 1][section - 1];
 		} while (!fin.eof());
 		printLexeme();
 	}
@@ -87,7 +89,7 @@ void LexerAnalyzer::printLexeme()
 {
 	printf("========LEXEME========\n");
 	for (int i = 0; i < tokens.size(); i++) {
-		cout << tokens[i] << "\t" << tokensType[i] << endl;
+		cout << tokens[i] << "\t\t" << tokensType[i] << endl;
 	}
 }
 
@@ -101,20 +103,20 @@ void LexerAnalyzer::stateOne()
 {
 	ch = getNextCharacter();
 	if (isOperator(ch)) {
-		currentState = 5;
+		section = 3;
 	}
 	else if (isSeperator(ch)) {
-		currentState = 4;
+		section = 4;
 	}
 	else if (isalpha(ch)) {
 		buffer[j++] = ch;
-		currentState = 2;
+		section = 1;
 	}
 	else if (isdigit(ch)) {
-		currentState = 6;
+		section = 2;
 	}
 	else if (ch == '!') {
-		currentState = 7;
+		section = 5;
 	}
 }
 
@@ -130,19 +132,19 @@ void LexerAnalyzer::stateTwo()
 	if (isalpha(ch)) {
 		buffer[j++] = ch;
 		// cout << ch << " is a letter\n";
-		currentState = 2;
+		section = 1;
 	}
 	else if (isalnum(ch)) {
 		buffer[j++] = ch;
 		// cout << ch << " is a digit\n";
-		currentState = 2;
+		section = 2;
 	}
 	else if (ch == '$') {
 		buffer[j++] = ch;
-		currentState = 2;
+		section = 1;
 	}
 	else{
-		currentState = 3;
+		section = 3;
 	}
 }
 
@@ -177,7 +179,6 @@ void LexerAnalyzer::stateThree()
 		tokens.push_back(string(1, ch));
 		tokensType.push_back("operator");
 	}
-	currentState = 1;
 }
 
 /*
@@ -191,7 +192,6 @@ void LexerAnalyzer::stateFour()
 	// cout << "is operator / seperators\n";
 	tokens.push_back(string(1, ch));
 	tokensType.push_back("seperator");
-	currentState = 1;
 }
 
 /*
@@ -205,7 +205,7 @@ void LexerAnalyzer::stateFive()
 {
 	tokens.push_back(string(1, ch));
 	tokensType.push_back("operator");
-	currentState = 1;
+	section = 1;
 }
 
 
@@ -217,7 +217,7 @@ void LexerAnalyzer::stateFive()
 */
 void LexerAnalyzer::stateSix()
 {
-	currentState = 1;
+	section = 2;
 }
 
 /*
