@@ -28,8 +28,9 @@ N =
  */
 LexerAnalyzer::LexerAnalyzer()
 {
+	isFirstRun = true;
 	currentState = 1;
-	buffer = new char[1000];
+	buffer = new char[10000];
 	j = 0;
 }
 
@@ -38,6 +39,7 @@ LexerAnalyzer::LexerAnalyzer()
 */
 LexerAnalyzer::~LexerAnalyzer()
 {
+	delete buffer;
 }
 
 /*
@@ -50,30 +52,52 @@ void LexerAnalyzer::analyzeLexeme()
 		do {
 			switch (currentState) {
 			case 1:
+				cout << "In state one\n";
 				stateOne();
 				break;
 			case 2:
+				cout << "In state two\n";
 				stateTwo();
 				break;
 			case 3:
+				cout << "In state three\n";
 				stateThree();
 				break;
 			case 4:
+				cout << "In state four\n";
 				stateFour();
 				break;
 			case 5:
+				cout << "In state five\n";
 				stateFive();
+				break;
 			case 6:
+				cout << "In state six\n";
 				stateSix();
+				break;
 			case 7:
+				cout << "In state seven\n";
 				stateSeven();
+				break;
+			case 8:
+				cout << "In state eight\n";
+				stateEight();
+				break;
+			case 9:
+				cout << "In state nine\n";
+				stateNine();
+				break;
+			case 10:
+				cout << "In state ten\n";
+				stateTen();
 			case 0:
 				break;
 			}
-
+			cout << "Finished State " << currentState << endl;
 			currentState = table[currentState - 1][section - 1];
 		} while (!fin.eof());
 		printLexeme();
+		fin.close();
 	}
 	else {
 		printf("No FILES to analyze.\n");
@@ -88,7 +112,7 @@ void LexerAnalyzer::analyzeLexeme()
 void LexerAnalyzer::printLexeme()
 {
 	printf("========LEXEME========\n");
-	for (int i = 0; i < tokens.size(); i++) {
+	for (int i = 0; i < tokens.size() && i < tokensType.size(); i++) {
 		cout << tokens[i] << "\t\t" << tokensType[i] << endl;
 	}
 }
@@ -102,6 +126,7 @@ void LexerAnalyzer::printLexeme()
 void LexerAnalyzer::stateOne()
 {
 	ch = getNextCharacter();
+	cout << "'" << ch << "'" << endl;
 	if (isOperator(ch)) {
 		section = 3;
 	}
@@ -118,6 +143,10 @@ void LexerAnalyzer::stateOne()
 	else if (ch == '!') {
 		section = 5;
 	}
+	else {
+		currentState = 10;
+		section = 1;
+	}
 }
 
 /*
@@ -126,26 +155,25 @@ void LexerAnalyzer::stateOne()
  Scans for more letter / digits after it until seperator or operator shows.
 */
 void LexerAnalyzer::stateTwo()
-{
+{ 
 	ch = getNextCharacter();
-	// cout << ch << ": ";
+	cout << "'" << ch << "'" << endl;
 	if (isalpha(ch)) {
 		buffer[j++] = ch;
-		// cout << ch << " is a letter\n";
 		section = 1;
 	}
 	else if (isalnum(ch)) {
 		buffer[j++] = ch;
-		// cout << ch << " is a digit\n";
 		section = 2;
 	}
 	else if (ch == '$') {
 		buffer[j++] = ch;
 		section = 1;
 	}
-	else{
+	else if(isOperator(ch) || isSeperator(ch)){
 		section = 3;
 	}
+	else section = 3;
 }
 
 /*
@@ -157,27 +185,29 @@ void LexerAnalyzer::stateTwo()
 */
 void LexerAnalyzer::stateThree()
 {
-	// check if identifier is a keyword
+
 	buffer[j] = '\0';
 	j = 0;
-	// cout << buffer;
-	tokens.push_back(buffer);
 	if (isKeyword(buffer)) {
-		// cout << " is keyword";
+		tokens.push_back(buffer);
 		tokensType.push_back("keyword");
 	}
 	else {
-		// cout << " is identifier";
+		tokens.push_back(buffer);
 		tokensType.push_back("identifier");
 	}
 
+	cout << "'" << ch << "'" << endl;
 	if (isSeperator(ch)) {
 		tokens.push_back(string(1, ch));
 		tokensType.push_back("seperator");
+		section = 4;
 	}
+	
 	else if (isOperator(ch)) {
 		tokens.push_back(string(1, ch));
 		tokensType.push_back("operator");
+		section = 3;
 	}
 }
 
@@ -189,9 +219,10 @@ void LexerAnalyzer::stateThree()
 */
 void LexerAnalyzer::stateFour()
 {
-	// cout << "is operator / seperators\n";
+	cout << "'" << ch << "'" << endl;
 	tokens.push_back(string(1, ch));
 	tokensType.push_back("seperator");
+	section = 4;
 }
 
 /*
@@ -203,9 +234,10 @@ void LexerAnalyzer::stateFour()
 // state five is when a operator is found
 void LexerAnalyzer::stateFive()
 {
+	cout << "'" << ch << "'" << endl;
 	tokens.push_back(string(1, ch));
 	tokensType.push_back("operator");
-	section = 1;
+	section = 2;
 }
 
 
@@ -217,6 +249,7 @@ void LexerAnalyzer::stateFive()
 */
 void LexerAnalyzer::stateSix()
 {
+	cout << "'" << ch << "'" << endl;
 	section = 2;
 }
 
@@ -227,6 +260,32 @@ void LexerAnalyzer::stateSix()
 */
 void LexerAnalyzer::stateSeven()
 {
+	cout << "'" << ch << "'" << endl;
+	section = 1;
+}
+
+/*
+ STATE EIGHT METHOD
+*/
+void LexerAnalyzer::stateEight()
+{
+	cout << "'" << ch << "'" << endl;
+	section = 1;
+}
+
+/*
+ STATE NINE METHOD
+*/
+void LexerAnalyzer::stateNine()
+{
+	cout << "'" << ch << "'" << endl;
+	section = 1;
+}
+
+void LexerAnalyzer::stateTen()
+{
+	cout << "'" << ch << "'" << endl;
+	section = 1;
 }
 
 /*
@@ -235,11 +294,12 @@ void LexerAnalyzer::stateSeven()
 */
 bool LexerAnalyzer::isSeperator(char ch)
 {
-	char seperators[13] {
+	char seperators[12] {
 		'(', ')', '\'', '{', '}',
 		'[', ']', ',', '.', ':',
-		';', '!', ' '
+		';', '!'
 	};
+	if (ch == char(32)) return true;
 
 	for (int i = 0; i < 13; i++)
 		if (ch == seperators[i]) return true;
@@ -309,14 +369,7 @@ void LexerAnalyzer::isTextFileOpen()
 */
 char LexerAnalyzer::getNextCharacter()
 {
-	if (!fin.eof()) {
-		return fin.get();
-	}
-	else {
-		printf("Reached the end of the file or file did not exist.\n");
-		fin.close();
-		return NULL;
-	}
+	return fin.get();
 }
 
 

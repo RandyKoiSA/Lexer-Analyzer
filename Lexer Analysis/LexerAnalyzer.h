@@ -22,6 +22,9 @@ public:
 	void stateFive();
 	void stateSix();
 	void stateSeven();
+	void stateEight();
+	void stateNine();
+	void stateTen();
 
 	bool isSeperator(char ch);
 	bool isOperator(char ch);
@@ -31,8 +34,8 @@ public:
 	void isTextFileOpen();
 	char getNextCharacter();
 private:
-	int section;
-	int currentState;
+	unsigned int section;
+	unsigned int currentState;
 
 	int table[10][5] = {
 		2, 6, 5, 4, 7,
@@ -41,11 +44,10 @@ private:
 		1, 1, 1, 1, 1,
 		1, 1, 1, 1, 1,
 		8, 6, 8, 8, 8,
-		7, 7, 7, 7, 9,
+		1, 1, 1, 1, 1,
 		1, 1, 1, 1, 1,
 		1, 1, 1, 1, 1,
 		1, 1, 1, 1, 1
-		
 	};
 	fstream fin;
 	string currentFile;
@@ -56,5 +58,6 @@ private:
 	char *buffer;
 	int j;
 	char ch;
+	bool isFirstRun;
 };
 
