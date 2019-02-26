@@ -31,7 +31,6 @@ LexerAnalyzer::LexerAnalyzer()
 	currentState = 1;
 	buffer = new char[1000];
 	j = 0;
-	hasStartedOnce = false;
 }
 
 /*
@@ -49,9 +48,6 @@ void LexerAnalyzer::analyzeLexeme()
 {
 	if (fin.is_open()) {
 		do {
-			if (!hasStartedOnce) hasStartedOnce = true;
-			else currentState = table[currentState - 1][section - 1];
-
 			switch (currentState) {
 			case 1:
 				stateOne();
@@ -74,6 +70,8 @@ void LexerAnalyzer::analyzeLexeme()
 			case 0:
 				break;
 			}
+
+			currentState = table[currentState - 1][section - 1];
 		} while (!fin.eof());
 		printLexeme();
 	}

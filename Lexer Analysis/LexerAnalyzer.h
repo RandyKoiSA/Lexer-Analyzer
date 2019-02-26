@@ -56,7 +56,5 @@ private:
 	char *buffer;
 	int j;
 	char ch;
-
-	bool hasStartedOnce;
 };
 
