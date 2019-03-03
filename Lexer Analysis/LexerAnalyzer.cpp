@@ -5,23 +5,7 @@
 #include <ctype.h>
 #include <vector>
 #include <stdio.h>
-
-/*
-epsilon = { l, d, others }
-states = { 1, 2, 3 }
-initalState = {1}
-finalState = {3}
-N = 
-+===+===+===+========+
-|   | l | d | others |
-+===+===+===+========+
-| 1 | 2 | 2 | 3      |
-+===+===+===+========+
-| 2 | 2 | 2 | 1      |
-+===+===+===+========+
-| 3 | ? | ? | ?      |
-+===+===+===+========+
-*/
+#include <iomanip>
 
 /*
  CONSTRUCTOR
@@ -52,48 +36,48 @@ void LexerAnalyzer::analyzeLexeme()
 		do {
 			switch (currentState) {
 			case 1:
-				cout << "In state one\n";
+				// cout << "In state one\n";
 				stateOne();
 				break;
 			case 2:
-				cout << "In state two\n";
+				// cout << "In state two\n";
 				stateTwo();
 				break;
 			case 3:
-				cout << "In state three\n";
+				// cout << "In state three\n";
 				stateThree();
 				break;
 			case 4:
-				cout << "In state four\n";
+				// cout << "In state four\n";
 				stateFour();
 				break;
 			case 5:
-				cout << "In state five\n";
+				// cout << "In state five\n";
 				stateFive();
 				break;
 			case 6:
-				cout << "In state six\n";
+				// cout << "In state six\n";
 				stateSix();
 				break;
 			case 7:
-				cout << "In state seven\n";
+				// cout << "In state seven\n";
 				stateSeven();
 				break;
 			case 8:
-				cout << "In state eight\n";
+				// cout << "In state eight\n";
 				stateEight();
 				break;
 			case 9:
-				cout << "In state nine\n";
+				// cout << "In state nine\n";
 				stateNine();
 				break;
 			case 10:
-				cout << "In state ten\n";
+				// cout << "In state ten\n";
 				stateTen();
 			case 0:
 				break;
 			}
-			cout << "Finished State " << currentState << endl;
+			// cout << "Finished State " << currentState << endl;
 			currentState = table[currentState - 1][section - 1];
 		} while (!fin.eof());
 		printLexeme();
@@ -111,9 +95,9 @@ void LexerAnalyzer::analyzeLexeme()
 */
 void LexerAnalyzer::printLexeme()
 {
-	cout << "Lexemes \t\tTOKENS\n";
+	cout << setw(20) << "Lexemes" << setw(30) << "TOKENS\n";
 	for (int i = 0; i < tokens.size() && i < tokensType.size(); i++) {
-		cout << tokens[i] << "\t\t\t" << tokensType[i] << endl;
+		cout << setw(20) << tokens[i] << setw(30) << tokensType[i] << endl;
 	}
 }
 
@@ -126,8 +110,7 @@ void LexerAnalyzer::printLexeme()
 void LexerAnalyzer::stateOne()
 {
 	ch = getNextCharacter();
-	cout << "'" << ch << "'" << endl;
-
+	// cout << "'" << ch << "'" << endl;
 	if (isOperator(ch)) {
 		section = 3;
 	}
@@ -144,9 +127,9 @@ void LexerAnalyzer::stateOne()
 		section = 2;
 	}
 	else {
-		cout << "Error has occurred\n";
-		currentState = 10;
-		section = 1;
+		// cout << "Error has occurred\n";
+		// cout << "Value causing problems is: " << ch << endl;
+		section = 7;
 	}
 }
 
@@ -158,12 +141,12 @@ void LexerAnalyzer::stateOne()
 void LexerAnalyzer::stateTwo()
 { 
 	ch = getNextCharacter();
-	cout << "'" << ch << "'" << endl;
+	// cout << "'" << ch << "'" << endl;
 	if (isalpha(ch)) {
 		buffer[j++] = ch;
 		section = 1;
 	}
-	else if (isalnum(ch)) {
+	else if (isdigit(ch)) {
 		buffer[j++] = ch;
 		section = 2;
 	}
@@ -186,7 +169,6 @@ void LexerAnalyzer::stateTwo()
 */
 void LexerAnalyzer::stateThree()
 {
-
 	buffer[j] = '\0';
 	j = 0;
 	if (isKeyword(buffer)) {
@@ -198,7 +180,6 @@ void LexerAnalyzer::stateThree()
 		tokensType.push_back("identifier");
 	}
 
-	cout << "'" << ch << "'" << endl;
 	if (isSeperator(ch)) {
 		if (ch != ' ') {
 			tokens.push_back(string(1, ch));
@@ -206,7 +187,6 @@ void LexerAnalyzer::stateThree()
 			section = 4;
 		}
 	}
-	
 	else if (isOperator(ch)) {
 		tokens.push_back(string(1, ch));
 		tokensType.push_back("operator");
@@ -222,11 +202,10 @@ void LexerAnalyzer::stateThree()
 */
 void LexerAnalyzer::stateFour()
 {
-	cout << "'" << ch << "'" << endl;
+	// cout << "'" << ch << "'" << endl;
 	if (ch == ' ') {
 		return;
 	}
-
 	tokens.push_back(string(1, ch));
 	tokensType.push_back("seperator");
 	section = 4;
@@ -241,7 +220,7 @@ void LexerAnalyzer::stateFour()
 // state five is when a operator is found
 void LexerAnalyzer::stateFive()
 {
-	cout << "'" << ch << "'" << endl;
+	// cout << "'" << ch << "'" << endl;
 	tokens.push_back(string(1, ch));
 	tokensType.push_back("operator");
 	section = 2;
@@ -257,7 +236,10 @@ void LexerAnalyzer::stateFive()
 void LexerAnalyzer::stateSix()
 {
 	ch = getNextCharacter();
-	cout << "'" << ch << "'" << endl;
+	// cout << "'" << ch << "'" << endl;
+
+	// found a letter, ending the search for integers
+	// integer is put into the token and
 	if (isalpha(ch) && ch != '\n') {
 		// send integer to token
 		buffer[j] = '\0';
@@ -266,7 +248,7 @@ void LexerAnalyzer::stateSix()
 		tokensType.push_back("integer");
 		section = 1;
 	}
-	else  if (isalnum(ch)) {
+	else  if (isdigit(ch)) {
 		buffer[j++] = ch;
 		section = 2;
 	}
@@ -293,8 +275,9 @@ void LexerAnalyzer::stateSix()
 		}
 	}
 	else {
-		cout << "Error has occurred\n";
-		section = 2;
+		// cout << "Error has occurred\n";
+		// cout << "Value causing problems is: " << ch << endl;
+		section = 7;
 	}
 }
 
@@ -305,7 +288,7 @@ void LexerAnalyzer::stateSix()
 */
 void LexerAnalyzer::stateSeven()
 {
-	cout << "'" << ch << "'" << endl;
+	// cout << "'" << ch << "'" << endl;
 	ch = getNextCharacter();
 	if (ch != '!') {
 		section = 1;
@@ -321,8 +304,8 @@ void LexerAnalyzer::stateSeven()
 */
 void LexerAnalyzer::stateEight()
 {
-	cout << "'" << ch << "'" << endl;
-	if (isalpha(ch)) {
+	// cout << "'" << ch << "'" << endl;
+	if (isalpha(ch) && ch != '\n') {
 		buffer[j++] = ch;
 		section = 1;
 	}
@@ -337,11 +320,10 @@ void LexerAnalyzer::stateEight()
 		section = 4;
 	}
 	else {
-		cout << "Error has occurred\n";
-		currentState = 10;
-		section = 1;
+		// cout << "Error has occurred\n";
+		// cout << "Value causing problems is: " << ch << endl;
+		section = 7;
 	}
-	section = 1;
 }
 
 /*
@@ -352,7 +334,7 @@ void LexerAnalyzer::stateEight()
 void LexerAnalyzer::stateNine()
 {
 	ch = getNextCharacter();
-	cout << "'" << ch << "'" << endl;
+	// cout << "'" << ch << "'" << endl;
 	if (isalpha(ch)) {
 		// send float to token
 		buffer[j] = '\0';
@@ -362,7 +344,8 @@ void LexerAnalyzer::stateNine()
 
 		section = 1;
 	}
-	else if (isalnum(ch)) {
+	else if (isdigit(ch)) {
+		buffer[j++] = ch;
 		section = 2;
 	}
 	else if (isOperator(ch)) {
@@ -385,14 +368,13 @@ void LexerAnalyzer::stateNine()
 	}
 	else {
 		cout << "Error has occurred\n";
-		currentState = 10;
-		section = 1;
+		section = 7;
 	}
 }
 
 void LexerAnalyzer::stateTen()
 {
-	cout << "'" << ch << "'" << endl;
+	// cout << "'" << ch << "'" << endl;
 	section = 1;
 }
 
