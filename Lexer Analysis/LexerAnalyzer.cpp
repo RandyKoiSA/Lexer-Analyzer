@@ -111,9 +111,9 @@ void LexerAnalyzer::analyzeLexeme()
 */
 void LexerAnalyzer::printLexeme()
 {
-	printf("========LEXEME========\n");
+	cout << "Lexemes \t\tTOKENS\n";
 	for (int i = 0; i < tokens.size() && i < tokensType.size(); i++) {
-		cout << tokens[i] << "\t\t" << tokensType[i] << endl;
+		cout << tokens[i] << "\t\t\t" << tokensType[i] << endl;
 	}
 }
 
@@ -127,23 +127,24 @@ void LexerAnalyzer::stateOne()
 {
 	ch = getNextCharacter();
 	cout << "'" << ch << "'" << endl;
+
 	if (isOperator(ch)) {
 		section = 3;
 	}
 	else if (isSeperator(ch)) {
-		section = 4;
+		if (ch == '!') section = 5;
+		else section = 4;
 	}
-	else if (isalpha(ch)) {
+	else if (isalpha(ch) && ch != '\n') {
 		buffer[j++] = ch;
 		section = 1;
 	}
 	else if (isdigit(ch)) {
+		buffer[j++] = ch;
 		section = 2;
 	}
-	else if (ch == '!') {
-		section = 5;
-	}
 	else {
+		cout << "Error has occurred\n";
 		currentState = 10;
 		section = 1;
 	}
@@ -199,9 +200,11 @@ void LexerAnalyzer::stateThree()
 
 	cout << "'" << ch << "'" << endl;
 	if (isSeperator(ch)) {
-		tokens.push_back(string(1, ch));
-		tokensType.push_back("seperator");
-		section = 4;
+		if (ch != ' ') {
+			tokens.push_back(string(1, ch));
+			tokensType.push_back("seperator");
+			section = 4;
+		}
 	}
 	
 	else if (isOperator(ch)) {
@@ -220,6 +223,10 @@ void LexerAnalyzer::stateThree()
 void LexerAnalyzer::stateFour()
 {
 	cout << "'" << ch << "'" << endl;
+	if (ch == ' ') {
+		return;
+	}
+
 	tokens.push_back(string(1, ch));
 	tokensType.push_back("seperator");
 	section = 4;
@@ -249,8 +256,46 @@ void LexerAnalyzer::stateFive()
 */
 void LexerAnalyzer::stateSix()
 {
+	ch = getNextCharacter();
 	cout << "'" << ch << "'" << endl;
-	section = 2;
+	if (isalpha(ch) && ch != '\n') {
+		// send integer to token
+		buffer[j] = '\0';
+		j = 0;
+		tokens.push_back(buffer);
+		tokensType.push_back("integer");
+		section = 1;
+	}
+	else  if (isalnum(ch)) {
+		buffer[j++] = ch;
+		section = 2;
+	}
+	else if (isOperator(ch)) {
+		// send integer to token
+		buffer[j] = '\0';
+		j = 0;
+		tokens.push_back(buffer);
+		tokensType.push_back("integer");
+		section = 3;
+	}
+	else if (isSeperator(ch)) {
+		if (ch == '.') {
+			buffer[j++] = ch;
+			section = 6;
+		}
+		else {
+			// send integer to token
+			buffer[j] = '\0';
+			j = 0;
+			tokens.push_back(buffer);
+			tokensType.push_back("integer");
+			section = 4;
+		}
+	}
+	else {
+		cout << "Error has occurred\n";
+		section = 2;
+	}
 }
 
 /*
@@ -261,25 +306,88 @@ void LexerAnalyzer::stateSix()
 void LexerAnalyzer::stateSeven()
 {
 	cout << "'" << ch << "'" << endl;
-	section = 1;
+	ch = getNextCharacter();
+	if (ch != '!') {
+		section = 1;
+	}
+	else {
+		section = 5;
+	}
 }
 
 /*
  STATE EIGHT METHOD
+ End of integer / float value
 */
 void LexerAnalyzer::stateEight()
 {
 	cout << "'" << ch << "'" << endl;
+	if (isalpha(ch)) {
+		buffer[j++] = ch;
+		section = 1;
+	}
+	else if (isOperator(ch)) {
+		tokens.push_back(string(1, ch));
+		tokensType.push_back("operator");
+		section = 3;
+	}
+	else if (isSeperator(ch)) {
+		tokens.push_back(string(1, ch));
+		tokensType.push_back("seperator");
+		section = 4;
+	}
+	else {
+		cout << "Error has occurred\n";
+		currentState = 10;
+		section = 1;
+	}
 	section = 1;
 }
 
 /*
  STATE NINE METHOD
+ A '.' was found while finding an integer
+ Scan for remaining number for float value
 */
 void LexerAnalyzer::stateNine()
 {
+	ch = getNextCharacter();
 	cout << "'" << ch << "'" << endl;
-	section = 1;
+	if (isalpha(ch)) {
+		// send float to token
+		buffer[j] = '\0';
+		j = 0;
+		tokens.push_back(buffer);
+		tokensType.push_back("float");
+
+		section = 1;
+	}
+	else if (isalnum(ch)) {
+		section = 2;
+	}
+	else if (isOperator(ch)) {
+		// send float to token
+		buffer[j] = '\0';
+		j = 0;
+		tokens.push_back(buffer);
+		tokensType.push_back("float");
+
+		section = 3;
+	}
+	else if (isSeperator(ch)) {
+		// send float to token
+		buffer[j] = '\0';
+		j = 0;
+		tokens.push_back(buffer);
+		tokensType.push_back("float");
+
+		section = 4;
+	}
+	else {
+		cout << "Error has occurred\n";
+		currentState = 10;
+		section = 1;
+	}
 }
 
 void LexerAnalyzer::stateTen()
