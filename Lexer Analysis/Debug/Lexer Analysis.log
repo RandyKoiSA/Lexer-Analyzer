@@ -1,3 +1,6 @@
-﻿  LexerAnalyzer.cpp
-d:\users\97randy\desktop\lexical-analyzer\lexer analysis\lexeranalyzer.cpp(99): warning C4018: '<': signed/unsigned mismatch
-  Lexer Analysis.vcxproj -> D:\Users\97randy\Desktop\Lexical-Analyzer\Debug\Lexer Analysis.exe
+﻿  pch.cpp
+  LexerAnalyzer.cpp
+c:\users\97ran\desktop\lexical-analyzer\lexer analysis\lexeranalyzer.cpp(99): warning C4018: '<': signed/unsigned mismatch
+  Main.cpp
+  Generating Code...
+  Lexer Analysis.vcxproj -> C:\Users\97ran\Desktop\Lexical-Analyzer\Debug\Lexer Analysis.exe

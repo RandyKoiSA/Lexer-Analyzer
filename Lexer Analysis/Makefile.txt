@@ -1,4 +1,0 @@
-g++ -c LexerAnalyzer.cpp
-g++ -c Main.cpp
-g++ -c pch.cpp
-
