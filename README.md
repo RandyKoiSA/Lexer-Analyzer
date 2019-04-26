@@ -3,7 +3,7 @@ The program is built using a Finite State Machine. It reads in a file containing
 ## Getting Started
 This program was built using Visual Studio 2017 and is recommended to use VS2017 to test for best results.
 
-It can also be ran by the LexerAnalysis.exe executable.
+It can also be ran by the `LexerAnalysis.exe` executable.
 
 When testing make sure to have the source code in the same directory as the 'Main.cpp'
 
